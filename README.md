@@ -20,6 +20,8 @@ value and "now" for "action" the bot will automaticaly take position(after the m
 way of your prefered position by 0.1%). The other way will trigger after a price is attained, 
 to use it that way you'll have to remove "now" from the value of "action" and leave it empty, 
 like so "". In this case the trigger will be the "entry_price" value, change it accordingly, the 
-"bid_size" value will be size of the bid the bot will take, default is 50.
+"bid_size" value will be size of the bid the bot will take, default is 50. Current stop loss value 
+is set to 0.0024, meaning that if price drop by 0.24% against your prefered side, bot will close
+your position and take a loss. you may change that value in the config file.
 
 I'll be uploading a video to explain howto use it on youtube soon !
