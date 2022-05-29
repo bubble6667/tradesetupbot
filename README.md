@@ -1,6 +1,6 @@
 Dependencies -
 
-For this to work you'll need python3 and you'll need to pip install ta, pandas, websocket-client.
+For this to work you'll need python3 and you'll need to pip install ta, pandas and websocket-client.
 
 Intro -
 
