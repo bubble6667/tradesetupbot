@@ -1,3 +1,7 @@
+Dependencies -
+
+For this to work you'll need python3 and you'll need to pip install ta, pandas, websocket-client.
+
 Intro -
 
 This is a trading helper, basicaly this program will automate getting in and out of posistion 
