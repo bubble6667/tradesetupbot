@@ -28,4 +28,5 @@ like so "". In this case the trigger will be the "entry_price" value, change it 
 is set to 0.0024, meaning that if price moves by 0.24% against your prefered side, the bot will 
 close your position and take a loss. you may change that value in the config file.
 
-I'll be uploading a video to explain howto use it on youtube soon !
+Here's a link to a youtube video i made that's gonna explain howto use it !
+https://youtu.be/KG7GkG5Fa3o
