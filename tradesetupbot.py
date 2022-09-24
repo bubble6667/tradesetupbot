@@ -176,6 +176,8 @@ def main():
     time.sleep(1)
     long_setup = False
     short_setup = False
+    above = False
+    below = False
     product_id = config['product_id']
     bid_size = config['bid_size']
     preferred_side = config['preferred_side']
@@ -186,6 +188,12 @@ def main():
             short_setup = True
         elif preferred_side == 'long':
             long_setup = True
+    else:
+        mydict = next(data_dict)
+        if mydict['price'] > entry_price:
+            above = True
+        else:
+            below = True
     while True:
         mydict = next(data_dict)
         if long_setup and mydict['side'] == 'up':
@@ -209,27 +217,27 @@ def main():
                 bid = mydict['price']
                 if trailing:
                     if lockprofit:
-                        if (bid - (.0075 * entrybid)) > stopprice:
-                            stopprice = bid - (.0075 * entrybid)
+                        if (bid - (.006 * entrybid)) > stopprice:
+                            stopprice = bid - (.006 * entrybid)
                         if mydict['minute_list'] > 11:
                             if mydict['ema5'] < mydict['ema11']:
                                 stopprice = bid + 20
                                 print("ema stop")
                                 print(mydict)
                     else:
-                        if (bid - (.0055 * entrybid)) > stopprice:
-                            stopprice = (bid - (.0055 * entrybid))
+                        if (bid - (.0035 * entrybid)) > stopprice:
+                            stopprice = (bid - (.0035 * entrybid))
                             if (entrybid + (.016 * entrybid)) < stopprice:
                                 lockprofit = True
                                 print("lockprofit " + str(stopprice) + " time " + st)
                                 print(mydict)
                 if bid > (entrybid + (.008 * entrybid)) and not breakeven:
-                    stopprice = entrybid + (.0069 * entrybid)
+                    stopprice = entrybid + (.0065 * entrybid)
                     breakeven = True
                     print("breakeven " + str(stopprice) + " time " + st)
                     print(mydict)
-                elif bid > (entrybid + (.0125 * entrybid)) and not trailing:
-                    stopprice = entrybid + (.007 * entrybid)
+                elif bid > (entrybid + (.01 * entrybid)) and not trailing:
+                    stopprice = entrybid + (.0066 * entrybid)
                     trailing = True
                     print("trailing " + str(stopprice) + " time " + st)
                     print(mydict)
@@ -267,27 +275,27 @@ def main():
                 bid = mydict['price']
                 if trailing:
                     if lockprofit:
-                        if (bid + (.0075 * entrybid)) < stopprice:
-                            stopprice = bid + (.0075 * entrybid)
+                        if (bid + (.006 * entrybid)) < stopprice:
+                            stopprice = bid + (.006 * entrybid)
                         if mydict['minute_list'] > 11:
                             if mydict['ema5'] > mydict['ema11']:
                                 stopprice = bid - 20
                                 print("ema stop")
                                 print(mydict)
                     else:
-                        if (bid + (.0055 * entrybid)) < stopprice:
-                            stopprice = (bid + (.0055 * entrybid))
+                        if (bid + (.0035 * entrybid)) < stopprice:
+                            stopprice = (bid + (.0035 * entrybid))
                             if (entrybid - (.016 * entrybid)) > stopprice:
                                 lockprofit = True
                                 print("lockprofit " + str(stopprice) + " time " + st)
                                 print(mydict)
                 if bid < (entrybid - (.008 * entrybid)) and not breakeven:
-                    stopprice = entrybid - (.0069 * entrybid)
+                    stopprice = entrybid - (.0065 * entrybid)
                     breakeven = True
                     print("breakeven " + str(stopprice) + " time " + st)
                     print(mydict)
-                elif bid < (entrybid - (.0125 * entrybid)) and not trailing:
-                    stopprice = entrybid - (.007 * entrybid)
+                elif bid < (entrybid - (.01 * entrybid)) and not trailing:
+                    stopprice = entrybid - (.0066 * entrybid)
                     trailing = True
                     print("trailing " + str(stopprice) + " time " + st)
                     print(mydict)
@@ -306,12 +314,19 @@ def main():
                         preferred_side = 'none'
         elif not short_setup and not long_setup:  # trying to find a trade setup
             if preferred_side == 'short':
-                if mydict['price'] > entry_price:
+                if mydict['price'] > entry_price and below:
                     short_setup = True
+                    print('shortsetup')
+                if mydict['price'] < entry_price and above:
+                    short_setup = True
+                    print('shortsetup')
             if preferred_side == 'long':
-                if mydict['price'] < entry_price:
+                if mydict['price'] < entry_price and above:
                     long_setup = True
-
+                    print('longsetup')
+                if mydict['price'] > entry_price and below:
+                    long_setup = True
+                    print('longsetup')
         time.sleep(.25)
 
 
