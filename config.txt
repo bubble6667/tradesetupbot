@@ -1,1 +1,1 @@
-{"bid_size": 50, "entry_price": 1796, "product_id": "PI_ETHUSD", "preferred_side": "", "action": "", "stop_loss": 0.0024, "api_public_key": "insert_public_key_here", "api_private_key": "insert_private_key_here", "api_path": "https://www.cryptofacilities.com"}
+{"bid_size": 50, "entry_price": 1796, "product_id": "PI_ETHUSD", "preferred_side": "", "action": "", "stop_loss": 0.0024, "api_public_key": "insert_public_key_here", "api_private_key": "insert_private_key_here", "api_path": "https://www.cryptofacilities.com", "adj_trigger": 0, "adj_trigger_value": 2}

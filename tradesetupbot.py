@@ -178,11 +178,14 @@ def main():
     short_setup = False
     above = False
     below = False
+    time_val = -1
     product_id = config['product_id']
     bid_size = config['bid_size']
     preferred_side = config['preferred_side']
     entry_price = config['entry_price']
     stop_loss = config['stop_loss']
+    adj_trigger = config['adj_trigger']
+    adj_trigger_value = config['adj_trigger_value']
     if config['action'] == 'now':
         if preferred_side == 'short':
             short_setup = True
@@ -190,6 +193,9 @@ def main():
             long_setup = True
     else:
         mydict = next(data_dict)
+        if adj_trigger > 0:
+            ts = time.time()
+            time_val = int(datetime.datetime.fromtimestamp(ts).strftime('%M'))
         if mydict['price'] > entry_price:
             above = True
         else:
@@ -215,6 +221,14 @@ def main():
                 ts = time.time()
                 st = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
                 bid = mydict['price']
+                if time_val != -1:
+                    st2 = int(datetime.datetime.fromtimestamp(ts).strftime('%M'))
+                    if st2 > time_val:
+                        time_val = st2
+                        entry_price += adj_trigger_value
+                    elif st2 == 0 and time_val == 59:
+                        time_val = st2
+                        entry_price += adj_trigger_value
                 if trailing:
                     if lockprofit:
                         if (bid - (.006 * entrybid)) > stopprice:
@@ -231,13 +245,13 @@ def main():
                                 lockprofit = True
                                 print("lockprofit " + str(stopprice) + " time " + st)
                                 print(mydict)
-                if bid > (entrybid + (.008 * entrybid)) and not breakeven:
-                    stopprice = entrybid + (.0065 * entrybid)
+                if bid > (entrybid + (.009 * entrybid)) and not breakeven:
+                    stopprice = entrybid + (.007 * entrybid)
                     breakeven = True
                     print("breakeven " + str(stopprice) + " time " + st)
                     print(mydict)
-                elif bid > (entrybid + (.01 * entrybid)) and not trailing:
-                    stopprice = entrybid + (.0066 * entrybid)
+                elif bid > (entrybid + (.011 * entrybid)) and not trailing:
+                    stopprice = entrybid + (.0076 * entrybid)
                     trailing = True
                     print("trailing " + str(stopprice) + " time " + st)
                     print(mydict)
@@ -245,7 +259,12 @@ def main():
                     if bid < stopprice:
                         result = send_auto_order("sell", product_id, bid_size)
                         print(mydict)
+                        preferred_side = 'none'
                         if breakeven:
+                            if time_val != -1:
+                                preferred_side = 'long'
+                                above = True
+                                below = False
                             print(st + " : win, entry was :" + str(entrybid) + " close was :" + str(bid))
                             print("-------------------------------------------------------------------")
                         else:
@@ -253,7 +272,7 @@ def main():
                             print("-------------------------------------------------------------------")
                         loop_b = False
                         long_setup = False
-                        preferred_side = 'none'
+
         elif short_setup and mydict['side'] == 'down':
             ts = time.time()
             st = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
@@ -273,6 +292,14 @@ def main():
                 ts = time.time()
                 st = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
                 bid = mydict['price']
+                if time_val != -1:
+                    st2 = int(datetime.datetime.fromtimestamp(ts).strftime('%M'))
+                    if st2 > time_val:
+                        time_val = st2
+                        entry_price += adj_trigger_value
+                    elif st2 == 0 and time_val == 59:
+                        time_val = st2
+                        entry_price += adj_trigger_value
                 if trailing:
                     if lockprofit:
                         if (bid + (.006 * entrybid)) < stopprice:
@@ -289,13 +316,13 @@ def main():
                                 lockprofit = True
                                 print("lockprofit " + str(stopprice) + " time " + st)
                                 print(mydict)
-                if bid < (entrybid - (.008 * entrybid)) and not breakeven:
-                    stopprice = entrybid - (.0065 * entrybid)
+                if bid < (entrybid - (.009 * entrybid)) and not breakeven:
+                    stopprice = entrybid - (.007 * entrybid)
                     breakeven = True
                     print("breakeven " + str(stopprice) + " time " + st)
                     print(mydict)
-                elif bid < (entrybid - (.01 * entrybid)) and not trailing:
-                    stopprice = entrybid - (.0066 * entrybid)
+                elif bid < (entrybid - (.011 * entrybid)) and not trailing:
+                    stopprice = entrybid - (.0076 * entrybid)
                     trailing = True
                     print("trailing " + str(stopprice) + " time " + st)
                     print(mydict)
@@ -303,7 +330,12 @@ def main():
                     if bid > stopprice:
                         result = send_auto_order("buy", product_id, bid_size)
                         print(mydict)
+                        preferred_side = 'none'
                         if breakeven:
+                            if time_val != -1:
+                                preferred_side = 'short'
+                                below = True
+                                above - False
                             print(st + " : win, entry was :" + str(entrybid) + " close was :" + str(bid))
                             print("-------------------------------------------------------------------")
                         else:
@@ -311,21 +343,35 @@ def main():
                             print("-------------------------------------------------------------------")
                         loop_b = False
                         short_setup = False
-                        preferred_side = 'none'
         elif not short_setup and not long_setup:  # trying to find a trade setup
+            if time_val != -1:
+                ts = time.time()
+                st = int(datetime.datetime.fromtimestamp(ts).strftime('%M'))
+                if st > time_val:
+                    time_val = st
+                    entry_price += adj_trigger_value
+                elif st == 0 and time_val == 59:
+                    time_val = st
+                    entry_price += adj_trigger_value
+                    print(mydict)
+                    print('current entry price: ' + str(entry_price))
             if preferred_side == 'short':
                 if mydict['price'] > entry_price and below:
                     short_setup = True
+                    print(mydict)
                     print('shortsetup')
                 if mydict['price'] < entry_price and above:
                     short_setup = True
+                    print(mydict)
                     print('shortsetup')
             if preferred_side == 'long':
                 if mydict['price'] < entry_price and above:
                     long_setup = True
+                    print(mydict)
                     print('longsetup')
                 if mydict['price'] > entry_price and below:
                     long_setup = True
+                    print(mydict)
                     print('longsetup')
         time.sleep(.25)
 
