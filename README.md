@@ -30,3 +30,6 @@ close your position and take a loss. you may change that value in the config fil
 
 Here's a link to a youtube video i made that's gonna explain howto use it !
 https://youtu.be/KG7GkG5Fa3o
+
+New video about the newer function add on 9/28
+https://youtu.be/GRbP6Hp0X4c
