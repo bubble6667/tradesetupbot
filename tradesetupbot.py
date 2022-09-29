@@ -335,7 +335,7 @@ def main():
                             if time_val != -1:
                                 preferred_side = 'short'
                                 below = True
-                                above - False
+                                above = False
                             print(st + " : win, entry was :" + str(entrybid) + " close was :" + str(bid))
                             print("-------------------------------------------------------------------")
                         else:
